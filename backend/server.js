@@ -1,6 +1,6 @@
 import cors from "cors";
 import express from "express";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import crypto from "node:crypto";
@@ -8,8 +8,8 @@ import crypto from "node:crypto";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const port = process.env.PORT || 3000;
-const dataDir = process.env.DATA_DIR || path.join(__dirname, "data");
-const dataFile = path.join(dataDir, "equipment.json");
+const preferredDataDir = process.env.DATA_DIR || path.join(__dirname, "data");
+let activeDataFile;
 const frontendOrigin = process.env.FRONTEND_ORIGIN || "*";
 
 const app = express();
@@ -17,8 +17,34 @@ const app = express();
 app.use(cors({ origin: frontendOrigin === "*" ? true : frontendOrigin }));
 app.use(express.json({ limit: "1mb" }));
 
+async function writableDataFile() {
+  if (activeDataFile) return activeDataFile;
+
+  const candidates = [
+    preferredDataDir,
+    path.join(__dirname, "data"),
+    "/tmp/equipment-list"
+  ];
+
+  for (const dir of candidates) {
+    try {
+      await mkdir(dir, { recursive: true });
+      const testFile = path.join(dir, ".write-test");
+      await writeFile(testFile, "ok", "utf8");
+      await unlink(testFile);
+      activeDataFile = path.join(dir, "equipment.json");
+      console.log(`Using equipment data file: ${activeDataFile}`);
+      return activeDataFile;
+    } catch (error) {
+      console.warn(`Cannot write equipment data in ${dir}: ${error.message}`);
+    }
+  }
+
+  throw new Error("No writable data directory available.");
+}
+
 async function ensureDataFile() {
-  await mkdir(dataDir, { recursive: true });
+  const dataFile = await writableDataFile();
   try {
     await readFile(dataFile, "utf8");
   } catch {
@@ -28,13 +54,20 @@ async function ensureDataFile() {
 
 async function readItems() {
   await ensureDataFile();
+  const dataFile = await writableDataFile();
   const raw = await readFile(dataFile, "utf8");
-  const parsed = JSON.parse(raw || "[]");
-  return Array.isArray(parsed) ? parsed : [];
+  try {
+    const parsed = JSON.parse(raw || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    await writeFile(dataFile, "[]\n", "utf8");
+    return [];
+  }
 }
 
 async function writeItems(items) {
   await ensureDataFile();
+  const dataFile = await writableDataFile();
   await writeFile(dataFile, `${JSON.stringify(items, null, 2)}\n`, "utf8");
 }
 
