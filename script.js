@@ -283,7 +283,6 @@ function resetForm() {
 
 function openModal() {
   equipmentModal.classList.remove("hidden");
-  document.body.classList.add("modal-open");
   if (window.matchMedia("(min-width: 861px)").matches) {
     document.querySelector("#equipmentName").focus();
   }
@@ -291,7 +290,6 @@ function openModal() {
 
 function closeModal() {
   equipmentModal.classList.add("hidden");
-  document.body.classList.remove("modal-open");
 }
 
 function fillForm(item) {
