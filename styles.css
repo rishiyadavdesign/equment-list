@@ -33,6 +33,10 @@ body {
   background: var(--bg);
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 button,
 input,
 select {
@@ -590,18 +594,36 @@ tbody tr:hover {
 
   .modal__panel {
     width: 100%;
-    max-height: 92vh;
-    border-radius: 18px 18px 0 0;
+    max-height: 88dvh;
+    border-radius: 16px 16px 0 0;
   }
 
-  .modal__head,
+  .modal__head {
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px 10px;
+  }
+
+  .modal__head h2 {
+    font-size: 1.25rem;
+    line-height: 1.1;
+  }
+
+  .modal__head p {
+    display: none;
+  }
+
   .equipment-form {
-    padding: 16px;
+    gap: 10px;
+    padding: 12px 16px 16px;
   }
 
   .icon-button {
-    width: 38px;
-    min-height: 38px;
+    width: 36px;
+    min-height: 36px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    line-height: 1;
   }
 
   .form-actions,
@@ -609,9 +631,27 @@ tbody tr:hover {
     flex-direction: column;
   }
 
+  .equipment-form label {
+    gap: 5px;
+  }
+
+  .equipment-form label span {
+    font-size: 0.72rem;
+  }
+
+  .equipment-form input {
+    min-height: 42px;
+    font-size: 1rem;
+  }
+
+  .split-fields {
+    gap: 10px;
+  }
+
   .form-actions {
     display: grid;
     grid-template-columns: 1fr;
+    gap: 8px;
   }
 }
 

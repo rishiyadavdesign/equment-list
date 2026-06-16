@@ -283,11 +283,15 @@ function resetForm() {
 
 function openModal() {
   equipmentModal.classList.remove("hidden");
-  document.querySelector("#equipmentName").focus();
+  document.body.classList.add("modal-open");
+  if (window.matchMedia("(min-width: 861px)").matches) {
+    document.querySelector("#equipmentName").focus();
+  }
 }
 
 function closeModal() {
   equipmentModal.classList.add("hidden");
+  document.body.classList.remove("modal-open");
 }
 
 function fillForm(item) {
