@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Equipment List</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="list-panel" id="printArea">
+      <div class="print-title">
+        <h2>Equipment List Report</h2>
+        <p id="printMeta">All assign dates</p>
+      </div>
+
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">Assignment tracker</p>
+          <h1>Equipment List</h1>
+          <p class="subtext">Daily assignment list with equipment number, person, date, quantity and missing count.</p>
+        </div>
+        <button class="primary-button no-print" id="addEquipmentButton" type="button">Add Equipment</button>
+      </header>
+
+      <div class="toolbar no-print">
+        <label class="search-field">
+          <span>Search</span>
+          <input id="topSearch" type="search" placeholder="Name, number, person or date">
+        </label>
+        <label>
+          <span>Assign Date</span>
+          <select id="dateFilter" aria-label="Filter by assign date">
+            <option value="all">All Assign Dates</option>
+          </select>
+        </label>
+        <label>
+          <span>Person</span>
+          <select id="personFilter" aria-label="Filter by assigned person">
+            <option value="all">All Persons</option>
+          </select>
+        </label>
+        <button class="secondary-button" id="topSearchButton" type="button">Search</button>
+        <button class="secondary-button" id="sampleButton" type="button">Sample</button>
+        <button class="secondary-button" id="printButton" type="button">Print</button>
+        <button class="secondary-button" id="pdfButton" type="button">Export PDF</button>
+      </div>
+
+      <div class="stats-line" aria-label="Equipment summary">
+        <span><strong id="totalCount">0</strong> equipment</span>
+        <span><strong id="missingCount">0</strong> missing</span>
+        <span><strong id="personCount">0</strong> persons</span>
+        <span><strong id="selectedDateLabel">All</strong> dates</span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Equipment Name</th>
+              <th>Equipment No.</th>
+              <th>Quantity</th>
+              <th>Missing</th>
+              <th>Assign Date</th>
+              <th>Assign To</th>
+              <th class="no-print">Action</th>
+            </tr>
+          </thead>
+          <tbody id="equipmentTable"></tbody>
+        </table>
+        <p class="empty" id="emptyState">No equipment found. Add a new item to start the list.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal hidden no-print" id="equipmentModal" role="dialog" aria-modal="true" aria-labelledby="formTitle">
+    <div class="modal__backdrop" data-close-modal></div>
+    <section class="modal__panel">
+      <div class="modal__head">
+        <div>
+          <h2 id="formTitle">Add Equipment</h2>
+          <p>Assign equipment to a person for any date.</p>
+        </div>
+        <button class="icon-button" id="closeModalButton" type="button" aria-label="Close">X</button>
+      </div>
+
+      <form id="equipmentForm" class="equipment-form">
+        <input type="hidden" id="itemId">
+        <label>
+          <span>Equipment Name</span>
+          <input id="equipmentName" required placeholder="Camera, laptop, tripod">
+        </label>
+        <label>
+          <span>Equipment Number</span>
+          <input id="equipmentNumber" required placeholder="CAM-001">
+        </label>
+        <div class="split-fields">
+          <label>
+            <span>Quantity</span>
+            <input id="quantity" type="number" min="0" value="1" required>
+          </label>
+          <label>
+            <span>Missing</span>
+            <input id="missing" type="number" min="0" value="0" required>
+          </label>
+        </div>
+        <label>
+          <span>Assign Date</span>
+          <input id="assignDate" type="date" required>
+        </label>
+        <label>
+          <span>Assign To Person</span>
+          <input id="assignedTo" required placeholder="Person name">
+        </label>
+        <div class="form-actions">
+          <button id="submitButton" class="primary-button" type="submit">Save Equipment</button>
+          <button class="secondary-button" type="reset">Clear</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
