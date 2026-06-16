@@ -1,5 +1,6 @@
 import cors from "cors";
 import express from "express";
+import { MongoClient } from "mongodb";
 import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,11 +12,30 @@ const port = process.env.PORT || 3000;
 const preferredDataDir = process.env.DATA_DIR || path.join(__dirname, "data");
 let activeDataFile;
 const frontendOrigin = process.env.FRONTEND_ORIGIN || "*";
+const mongoUri = process.env.MONGODB_URI;
+const mongoDbName = process.env.MONGODB_DB || "equipment_list";
+const mongoCollectionName = process.env.MONGODB_COLLECTION || "assignments";
+let mongoClient;
+let mongoCollection;
 
 const app = express();
 
 app.use(cors({ origin: frontendOrigin === "*" ? true : frontendOrigin }));
 app.use(express.json({ limit: "1mb" }));
+
+async function getCollection() {
+  if (!mongoUri) return null;
+  if (mongoCollection) return mongoCollection;
+
+  mongoClient = new MongoClient(mongoUri);
+  await mongoClient.connect();
+  mongoCollection = mongoClient.db(mongoDbName).collection(mongoCollectionName);
+  await mongoCollection.createIndex({ id: 1 }, { unique: true });
+  await mongoCollection.createIndex({ assignDate: 1 });
+  await mongoCollection.createIndex({ assignedTo: 1 });
+  console.log(`Using MongoDB collection: ${mongoDbName}.${mongoCollectionName}`);
+  return mongoCollection;
+}
 
 async function writableDataFile() {
   if (activeDataFile) return activeDataFile;
@@ -64,6 +84,14 @@ async function ensureDataFile() {
 }
 
 async function readItems() {
+  const collection = await getCollection();
+  if (collection) {
+    return collection
+      .find({}, { projection: { _id: 0 } })
+      .sort({ assignDate: -1, createdAt: -1 })
+      .toArray();
+  }
+
   await ensureDataFile();
   const dataFile = await writableDataFile();
   const raw = await readFile(dataFile, "utf8");
@@ -77,6 +105,19 @@ async function readItems() {
 }
 
 async function writeItems(items) {
+  const collection = await getCollection();
+  if (collection) {
+    await collection.deleteMany({});
+    if (items.length) {
+      await collection.insertMany(items.map((item) => ({
+        ...item,
+        createdAt: item.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      })));
+    }
+    return;
+  }
+
   await ensureDataFile();
   const dataFile = await writableDataFile();
   await writeFile(dataFile, `${JSON.stringify(items, null, 2)}\n`, "utf8");
@@ -90,7 +131,9 @@ function cleanItem(input) {
     quantity: Math.max(0, Number(input.quantity) || 0),
     missing: Math.max(0, Number(input.missing) || 0),
     assignDate: String(input.assignDate || "").trim(),
-    assignedTo: String(input.assignedTo || "").trim()
+    assignedTo: String(input.assignedTo || "").trim(),
+    createdAt: input.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   };
 }
 
@@ -104,8 +147,26 @@ function validateItem(item) {
   return errors;
 }
 
-app.get("/health", (_req, res) => {
-  res.json({ ok: true, version: "storage-v2" });
+app.get("/health", async (_req, res) => {
+  try {
+    const collection = await getCollection();
+    if (collection) {
+      await collection.db.command({ ping: 1 });
+    }
+
+    res.json({
+      ok: true,
+      version: "mongodb-v1",
+      storage: collection ? "mongodb" : "file"
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      version: "mongodb-v1",
+      storage: "mongodb",
+      error: "MongoDB connection failed."
+    });
+  }
 });
 
 app.get("/api/equipment", async (_req, res, next) => {
@@ -124,7 +185,12 @@ app.post("/api/equipment", async (req, res, next) => {
 
     const items = await readItems();
     items.unshift(item);
-    await writeItems(items);
+    const collection = await getCollection();
+    if (collection) {
+      await collection.insertOne(item);
+    } else {
+      await writeItems(items);
+    }
     res.status(201).json(item);
   } catch (error) {
     next(error);
@@ -156,8 +222,13 @@ app.put("/api/equipment/:id", async (req, res, next) => {
     const errors = validateItem(item);
     if (errors.length) return res.status(400).json({ errors });
 
-    items[index] = item;
-    await writeItems(items);
+    const collection = await getCollection();
+    if (collection) {
+      await collection.replaceOne({ id: req.params.id }, item);
+    } else {
+      items[index] = item;
+      await writeItems(items);
+    }
     res.json(item);
   } catch (error) {
     next(error);
@@ -167,8 +238,13 @@ app.put("/api/equipment/:id", async (req, res, next) => {
 app.delete("/api/equipment/:id", async (req, res, next) => {
   try {
     const items = await readItems();
-    const nextItems = items.filter((item) => item.id !== req.params.id);
-    await writeItems(nextItems);
+    const collection = await getCollection();
+    if (collection) {
+      await collection.deleteOne({ id: req.params.id });
+    } else {
+      const nextItems = items.filter((item) => item.id !== req.params.id);
+      await writeItems(nextItems);
+    }
     res.status(204).end();
   } catch (error) {
     next(error);
@@ -186,3 +262,11 @@ app.use((error, _req, res, _next) => {
 app.listen(port, () => {
   console.log(`Equipment API running on port ${port}`);
 });
+
+async function shutdown() {
+  if (mongoClient) await mongoClient.close();
+  process.exit(0);
+}
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
