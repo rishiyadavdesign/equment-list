@@ -49,7 +49,6 @@ const pdfButton = document.querySelector("#pdfButton");
 const printMeta = document.querySelector("#printMeta");
 const equipmentModal = document.querySelector("#equipmentModal");
 const addEquipmentButton = document.querySelector("#addEquipmentButton");
-const closeModalButton = document.querySelector("#closeModalButton");
 const deleteSelectedButton = document.querySelector("#deleteSelectedButton");
 const selectedCount = document.querySelector("#selectedCount");
 const selectedCountChip = document.querySelector("#selectedCountChip");
@@ -282,7 +281,6 @@ function resetForm() {
 }
 
 function openModal() {
-  equipmentModal.classList.remove("hidden");
   equipmentModal.scrollIntoView({ behavior: "smooth", block: "start" });
   if (window.matchMedia("(min-width: 861px)").matches) {
     document.querySelector("#equipmentName").focus();
@@ -290,7 +288,7 @@ function openModal() {
 }
 
 function closeModal() {
-  equipmentModal.classList.add("hidden");
+  resetForm();
 }
 
 function fillForm(item) {
@@ -333,7 +331,6 @@ equipmentForm.addEventListener("submit", async (event) => {
   try {
     await saveItems();
     resetForm();
-    closeModal();
     render();
   } catch (error) {
     alert(error.message);
@@ -437,13 +434,6 @@ deleteSelectedButton.addEventListener("click", async () => {
 addEquipmentButton.addEventListener("click", () => {
   resetForm();
   openModal();
-});
-
-closeModalButton.addEventListener("click", closeModal);
-equipmentModal.addEventListener("click", (event) => {
-  if (event.target.matches("[data-close-modal]")) {
-    closeModal();
-  }
 });
 
 document.addEventListener("keydown", (event) => {
