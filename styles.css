@@ -89,7 +89,8 @@ h2 {
 }
 
 .subtext,
-.modal__head p {
+.modal__head p,
+.form-drawer__head p {
   margin: 8px 0 0;
   color: var(--muted);
   line-height: 1.5;
@@ -321,6 +322,19 @@ tbody tr:hover {
   display: block;
 }
 
+.form-drawer {
+  border-bottom: 1px solid var(--line-soft);
+  background: #fbfcff;
+}
+
+.form-drawer__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 22px 0;
+}
+
 .modal {
   position: fixed;
   inset: 0;
@@ -435,7 +449,8 @@ tbody tr:hover {
   }
 
   .subtext,
-  .modal__head p {
+  .modal__head p,
+  .form-drawer__head p {
     margin-top: 6px;
     font-size: 0.94rem;
     line-height: 1.45;
@@ -585,6 +600,21 @@ tbody tr:hover {
     display: inline;
   }
 
+  .form-drawer__head {
+    align-items: center;
+    gap: 12px;
+    padding: 12px 12px 0;
+  }
+
+  .form-drawer__head h2 {
+    font-size: 1.1rem;
+  }
+
+  .form-drawer__head p,
+  .modal-helper {
+    display: none;
+  }
+
   .modal {
     align-items: end;
     padding: 0;
@@ -608,14 +638,9 @@ tbody tr:hover {
     line-height: 1.1;
   }
 
-  .modal__head p,
-  .modal-helper {
-    display: none;
-  }
-
   .equipment-form {
     gap: 10px;
-    padding: 12px 16px 16px;
+    padding: 12px;
   }
 
   .icon-button {

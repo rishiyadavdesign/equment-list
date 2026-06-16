@@ -57,6 +57,50 @@
         <span><strong id="selectedDateLabel">All</strong> dates</span>
       </div>
 
+      <section class="form-drawer hidden no-print" id="equipmentModal" aria-labelledby="formTitle">
+        <div class="form-drawer__head">
+          <div>
+            <h2 id="formTitle">Add Equipment</h2>
+            <p class="modal-helper">Assign equipment to a person for any date.</p>
+          </div>
+          <button class="icon-button" id="closeModalButton" type="button" aria-label="Close">X</button>
+        </div>
+
+        <form id="equipmentForm" class="equipment-form">
+          <input type="hidden" id="itemId">
+          <label>
+            <span>Equipment Name</span>
+            <input id="equipmentName" required placeholder="Camera, laptop, tripod">
+          </label>
+          <label>
+            <span>Equipment Number</span>
+            <input id="equipmentNumber" required placeholder="CAM-001">
+          </label>
+          <div class="split-fields">
+            <label>
+              <span>Quantity</span>
+              <input id="quantity" type="number" min="0" value="1" required>
+            </label>
+            <label>
+              <span>Missing</span>
+              <input id="missing" type="number" min="0" value="0" required>
+            </label>
+          </div>
+          <label>
+            <span>Assign Date</span>
+            <input id="assignDate" type="date" required>
+          </label>
+          <label>
+            <span>Assign To Person</span>
+            <input id="assignedTo" required placeholder="Person name">
+          </label>
+          <div class="form-actions">
+            <button id="submitButton" class="primary-button" type="submit">Save Equipment</button>
+            <button class="secondary-button" type="reset">Clear</button>
+          </div>
+        </form>
+      </section>
+
       <div class="table-wrap">
         <table>
           <thead>
@@ -79,53 +123,6 @@
       </div>
     </section>
   </main>
-
-  <div class="modal hidden no-print" id="equipmentModal" role="dialog" aria-modal="true" aria-labelledby="formTitle">
-    <div class="modal__backdrop" data-close-modal></div>
-    <section class="modal__panel">
-      <div class="modal__head">
-        <div>
-          <h2 id="formTitle">Add Equipment</h2>
-          <p class="modal-helper">Assign equipment to a person for any date.</p>
-        </div>
-        <button class="icon-button" id="closeModalButton" type="button" aria-label="Close">X</button>
-      </div>
-
-      <form id="equipmentForm" class="equipment-form">
-        <input type="hidden" id="itemId">
-        <label>
-          <span>Equipment Name</span>
-          <input id="equipmentName" required placeholder="Camera, laptop, tripod">
-        </label>
-        <label>
-          <span>Equipment Number</span>
-          <input id="equipmentNumber" required placeholder="CAM-001">
-        </label>
-        <div class="split-fields">
-          <label>
-            <span>Quantity</span>
-            <input id="quantity" type="number" min="0" value="1" required>
-          </label>
-          <label>
-            <span>Missing</span>
-            <input id="missing" type="number" min="0" value="0" required>
-          </label>
-        </div>
-        <label>
-          <span>Assign Date</span>
-          <input id="assignDate" type="date" required>
-        </label>
-        <label>
-          <span>Assign To Person</span>
-          <input id="assignedTo" required placeholder="Person name">
-        </label>
-        <div class="form-actions">
-          <button id="submitButton" class="primary-button" type="submit">Save Equipment</button>
-          <button class="secondary-button" type="reset">Clear</button>
-        </div>
-      </form>
-    </section>
-  </div>
 
   <script src="config.js"></script>
   <script src="script.js"></script>

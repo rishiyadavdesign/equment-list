@@ -283,6 +283,7 @@ function resetForm() {
 
 function openModal() {
   equipmentModal.classList.remove("hidden");
+  equipmentModal.scrollIntoView({ behavior: "smooth", block: "start" });
   if (window.matchMedia("(min-width: 861px)").matches) {
     document.querySelector("#equipmentName").focus();
   }
