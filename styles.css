@@ -127,6 +127,14 @@ select {
   outline: none;
 }
 
+input[type="checkbox"] {
+  min-height: 0;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--blue);
+}
+
 input:focus,
 select:focus {
   border-color: var(--blue);
@@ -164,6 +172,18 @@ select:focus {
   background: #f9fafb;
 }
 
+.danger-button {
+  color: var(--red);
+}
+
+.danger-button:hover {
+  background: var(--red-soft);
+}
+
+.hidden {
+  display: none !important;
+}
+
 .stats-line {
   display: flex;
   flex-wrap: wrap;
@@ -199,7 +219,7 @@ select:focus {
 
 table {
   width: 100%;
-  min-width: 920px;
+  min-width: 980px;
   border-collapse: collapse;
 }
 
@@ -213,6 +233,11 @@ td {
   text-align: left;
   border-bottom: 1px solid var(--line-soft);
   vertical-align: middle;
+}
+
+.select-column {
+  width: 46px;
+  text-align: center;
 }
 
 th {
@@ -382,6 +407,10 @@ tbody tr:hover {
     align-items: stretch;
   }
 
+  .danger-button {
+    grid-column: 1 / -1;
+  }
+
   .app-header {
     display: grid;
     grid-template-columns: 1fr auto;
@@ -450,6 +479,11 @@ tbody tr:hover {
     padding: 0 10px;
   }
 
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+  }
+
   .stats-line {
     gap: 5px;
     padding: 8px 12px;
@@ -473,6 +507,18 @@ tbody tr:hover {
   th,
   td {
     display: block;
+  }
+
+  td.select-column {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 34px;
+  }
+
+  td.select-column::before {
+    content: "Select";
+    margin-right: auto;
   }
 
   table {
@@ -613,6 +659,7 @@ tbody tr:hover {
   .app-header,
   .toolbar,
   .stats-line,
+  .select-column,
   td:last-child,
   th:last-child {
     display: none !important;

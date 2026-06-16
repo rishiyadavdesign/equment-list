@@ -46,12 +46,14 @@
         <button class="secondary-button" id="sampleButton" type="button">Sample</button>
         <button class="secondary-button" id="printButton" type="button">Print</button>
         <button class="secondary-button" id="pdfButton" type="button"><span class="desktop-label">Export PDF</span><span class="mobile-label">PDF</span></button>
+        <button class="secondary-button danger-button hidden" id="deleteSelectedButton" type="button">Delete Selected</button>
       </div>
 
       <div class="stats-line" aria-label="Equipment summary">
         <span><strong id="totalCount">0</strong> equipment</span>
         <span><strong id="missingCount">0</strong> missing</span>
         <span><strong id="personCount">0</strong> persons</span>
+        <span class="hidden" id="selectedCountChip"><strong id="selectedCount">0</strong> selected</span>
         <span><strong id="selectedDateLabel">All</strong> dates</span>
       </div>
 
@@ -59,6 +61,9 @@
         <table>
           <thead>
             <tr>
+              <th class="select-column no-print">
+                <input id="selectAllRows" class="row-checkbox" type="checkbox" aria-label="Select all visible equipment">
+              </th>
               <th>Equipment Name</th>
               <th>Equipment No.</th>
               <th>Quantity</th>

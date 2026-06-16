@@ -32,6 +32,7 @@ const sampleItems = [
 ];
 
 let items = [];
+let selectedIds = new Set();
 
 const equipmentTable = document.querySelector("#equipmentTable");
 const emptyState = document.querySelector("#emptyState");
@@ -49,6 +50,10 @@ const printMeta = document.querySelector("#printMeta");
 const equipmentModal = document.querySelector("#equipmentModal");
 const addEquipmentButton = document.querySelector("#addEquipmentButton");
 const closeModalButton = document.querySelector("#closeModalButton");
+const deleteSelectedButton = document.querySelector("#deleteSelectedButton");
+const selectedCount = document.querySelector("#selectedCount");
+const selectedCountChip = document.querySelector("#selectedCountChip");
+const selectAllRows = document.querySelector("#selectAllRows");
 
 function readItems() {
   try {
@@ -199,6 +204,19 @@ function updateSummary() {
   printMeta.textContent = `${dateFilter.value === "all" ? "All assign dates" : `Assign date: ${selectedDate}`} · ${selectedPerson}`;
 }
 
+function updateSelectionControls() {
+  const visibleItems = filteredItems();
+  const visibleIds = visibleItems.map((item) => item.id);
+  const selectedVisibleCount = visibleIds.filter((id) => selectedIds.has(id)).length;
+  selectedIds = new Set([...selectedIds].filter((id) => items.some((item) => item.id === id)));
+
+  selectedCount.textContent = selectedIds.size;
+  selectedCountChip.classList.toggle("hidden", selectedIds.size === 0);
+  deleteSelectedButton.classList.toggle("hidden", selectedIds.size === 0);
+  selectAllRows.checked = visibleIds.length > 0 && selectedVisibleCount === visibleIds.length;
+  selectAllRows.indeterminate = selectedVisibleCount > 0 && selectedVisibleCount < visibleIds.length;
+}
+
 function renderTable() {
   const visibleItems = filteredItems();
   equipmentTable.innerHTML = "";
@@ -207,6 +225,9 @@ function renderTable() {
     const equipmentNumber = item.equipmentNumber || "Not set";
     const row = document.createElement("tr");
     row.innerHTML = `
+      <td data-label="Select" class="select-column no-print">
+        <input class="row-checkbox" type="checkbox" data-action="select" data-id="${item.id}" aria-label="Select ${escapeHtml(item.equipmentName)}" ${selectedIds.has(item.id) ? "checked" : ""}>
+      </td>
       <td data-label="Equipment Name" class="equipment-name">${escapeHtml(item.equipmentName)}</td>
       <td data-label="Equipment No." class="muted-text">${escapeHtml(equipmentNumber)}</td>
       <td data-label="Quantity"><span class="count">${Number(item.quantity) || 0}</span></td>
@@ -225,6 +246,7 @@ function renderTable() {
   });
 
   emptyState.classList.toggle("visible", visibleItems.length === 0);
+  updateSelectionControls();
 }
 
 function render() {
@@ -320,6 +342,17 @@ equipmentForm.addEventListener("reset", () => {
 });
 
 equipmentTable.addEventListener("click", (event) => {
+  const checkbox = event.target.closest('input[data-action="select"]');
+  if (checkbox) {
+    if (checkbox.checked) {
+      selectedIds.add(checkbox.dataset.id);
+    } else {
+      selectedIds.delete(checkbox.dataset.id);
+    }
+    updateSelectionControls();
+    return;
+  }
+
   const button = event.target.closest("button[data-action]");
   if (!button) return;
 
@@ -336,6 +369,7 @@ equipmentTable.addEventListener("click", (event) => {
 
   if (button.dataset.action === "delete") {
     items = items.filter((item) => item.id !== selectedItem.id);
+    selectedIds.delete(selectedItem.id);
     saveItems()
       .then(render)
       .catch((error) => alert(error.message));
@@ -369,6 +403,34 @@ personFilter.addEventListener("change", () => {
   updateSummary();
   renderTable();
 });
+
+selectAllRows.addEventListener("change", () => {
+  const visibleIds = filteredItems().map((item) => item.id);
+  if (selectAllRows.checked) {
+    visibleIds.forEach((id) => selectedIds.add(id));
+  } else {
+    visibleIds.forEach((id) => selectedIds.delete(id));
+  }
+  renderTable();
+});
+
+deleteSelectedButton.addEventListener("click", async () => {
+  if (selectedIds.size === 0) return;
+  const count = selectedIds.size;
+  const shouldDelete = confirm(`Delete ${count} selected item${count === 1 ? "" : "s"}?`);
+  if (!shouldDelete) return;
+
+  items = items.filter((item) => !selectedIds.has(item.id));
+  selectedIds.clear();
+
+  try {
+    await saveItems();
+    render();
+  } catch (error) {
+    alert(error.message);
+  }
+});
+
 addEquipmentButton.addEventListener("click", () => {
   resetForm();
   openModal();
