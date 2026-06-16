@@ -20,6 +20,11 @@
   box-sizing: border-box;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   min-height: 100vh;
   margin: 0;
@@ -354,34 +359,93 @@ tbody tr:hover {
 }
 
 @media (max-width: 860px) {
+  body {
+    background: #f4f6fb;
+  }
+
   .app-shell {
-    width: calc(100% - 20px);
-    margin: 10px auto 24px;
+    width: 100%;
+    margin: 0;
+    padding: 10px;
+  }
+
+  .list-panel {
+    border-radius: 14px;
   }
 
   .app-header,
   .toolbar {
-    grid-template-columns: 1fr;
     align-items: stretch;
   }
 
   .app-header {
     flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .eyebrow {
+    margin-bottom: 5px;
+    font-size: 0.68rem;
+  }
+
+  h1 {
+    font-size: 1.95rem;
+    line-height: 1.05;
+  }
+
+  h2 {
+    font-size: 1.15rem;
+  }
+
+  .subtext,
+  .modal__head p {
+    margin-top: 6px;
+    font-size: 0.94rem;
+    line-height: 1.45;
   }
 
   .primary-button,
   .secondary-button {
     width: 100%;
+    min-height: 44px;
+    border-radius: 11px;
+    font-size: 0.94rem;
+    padding: 0 12px;
   }
 
   .toolbar {
-    padding: 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 12px 16px;
   }
 
-  .app-header,
+  .search-field {
+    grid-column: 1 / -1;
+  }
+
+  label span {
+    font-size: 0.74rem;
+  }
+
+  input,
+  select {
+    min-height: 44px;
+    border-radius: 11px;
+    font-size: 0.95rem;
+    padding: 0 11px;
+  }
+
   .stats-line {
-    padding-left: 14px;
-    padding-right: 14px;
+    gap: 6px;
+    padding: 10px 16px;
+  }
+
+  .stats-line span {
+    min-height: 28px;
+    padding: 0 10px;
+    font-size: 0.78rem;
   }
 
   .table-wrap {
@@ -407,7 +471,7 @@ tbody tr:hover {
   }
 
   tr {
-    margin-top: 12px;
+    margin-top: 10px;
     border: 1px solid var(--line);
     border-radius: 12px;
     background: #fff;
@@ -415,10 +479,11 @@ tbody tr:hover {
 
   td {
     display: grid;
-    grid-template-columns: 118px minmax(0, 1fr);
+    grid-template-columns: 104px minmax(0, 1fr);
     gap: 10px;
-    padding: 9px 12px;
+    padding: 8px 12px;
     border-bottom: 0;
+    font-size: 0.9rem;
   }
 
   td::before {
@@ -433,10 +498,70 @@ tbody tr:hover {
     max-width: none;
   }
 
+  .row-actions {
+    gap: 8px;
+  }
+
+  .text-action {
+    min-height: 32px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0 10px;
+    background: #fff;
+    font-size: 0.78rem;
+  }
+
+  .modal {
+    align-items: end;
+    padding: 0;
+  }
+
+  .modal__panel {
+    width: 100%;
+    max-height: 92vh;
+    border-radius: 18px 18px 0 0;
+  }
+
+  .modal__head,
+  .equipment-form {
+    padding: 16px;
+  }
+
+  .icon-button {
+    width: 38px;
+    min-height: 38px;
+  }
+
   .form-actions,
   .split-fields {
-    grid-template-columns: 1fr;
     flex-direction: column;
+  }
+
+  .form-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 390px) {
+  .app-shell {
+    padding: 8px;
+  }
+
+  .toolbar {
+    padding: 10px 12px;
+  }
+
+  .app-header {
+    padding: 14px;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  td {
+    grid-template-columns: 92px minmax(0, 1fr);
   }
 }
 
