@@ -44,8 +44,8 @@ button {
 }
 
 .app-shell {
-  width: min(1180px, calc(100% - 32px));
-  margin: 28px auto;
+  width: min(1180px, calc(100% - 40px));
+  margin: 24px auto;
 }
 
 .list-panel {
@@ -58,10 +58,10 @@ button {
 
 .app-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  padding: 24px 24px 18px;
+  gap: 18px;
+  padding: 20px 22px;
   border-bottom: 1px solid var(--line-soft);
 }
 
@@ -80,7 +80,7 @@ h2 {
 }
 
 h1 {
-  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-size: clamp(1.65rem, 3vw, 2.2rem);
   line-height: 1.05;
 }
 
@@ -100,7 +100,7 @@ h2 {
   grid-template-columns: minmax(240px, 1fr) 190px 190px repeat(4, auto);
   gap: 10px;
   align-items: end;
-  padding: 16px 24px;
+  padding: 14px 22px;
   border-bottom: 1px solid var(--line-soft);
 }
 
@@ -136,9 +136,9 @@ select:focus {
 .primary-button,
 .secondary-button,
 .icon-button {
-  min-height: 42px;
+  min-height: 40px;
   border-radius: 10px;
-  padding: 0 16px;
+  padding: 0 14px;
   font-weight: 800;
 }
 
@@ -171,6 +171,10 @@ select:focus {
   padding: 14px 24px;
   color: var(--muted);
   border-bottom: 1px solid var(--line-soft);
+}
+
+.mobile-label {
+  display: none;
 }
 
 .stats-line span {
@@ -366,11 +370,11 @@ tbody tr:hover {
   .app-shell {
     width: 100%;
     margin: 0;
-    padding: 10px;
+    padding: 8px;
   }
 
   .list-panel {
-    border-radius: 14px;
+    border-radius: 12px;
   }
 
   .app-header,
@@ -379,18 +383,19 @@ tbody tr:hover {
   }
 
   .app-header {
-    flex-direction: column;
-    gap: 14px;
-    padding: 16px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    padding: 12px;
   }
 
   .eyebrow {
-    margin-bottom: 5px;
-    font-size: 0.68rem;
+    margin-bottom: 3px;
+    font-size: 0.62rem;
   }
 
   h1 {
-    font-size: 1.95rem;
+    font-size: 1.45rem;
     line-height: 1.05;
   }
 
@@ -407,50 +412,58 @@ tbody tr:hover {
 
   .primary-button,
   .secondary-button {
-    width: 100%;
-    min-height: 44px;
-    border-radius: 11px;
-    font-size: 0.94rem;
-    padding: 0 12px;
+    min-height: 38px;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    padding: 0 10px;
+  }
+
+  .app-header .primary-button {
+    width: auto;
+    white-space: nowrap;
   }
 
   .toolbar {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    padding: 12px 16px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 10px 12px;
   }
 
   .search-field {
     grid-column: 1 / -1;
   }
 
+  .toolbar label:not(.search-field) {
+    grid-column: span 2;
+  }
+
   label span {
-    font-size: 0.74rem;
+    font-size: 0.68rem;
   }
 
   input,
   select {
-    min-height: 44px;
-    border-radius: 11px;
-    font-size: 0.95rem;
-    padding: 0 11px;
+    min-height: 38px;
+    border-radius: 9px;
+    font-size: 0.84rem;
+    padding: 0 10px;
   }
 
   .stats-line {
-    gap: 6px;
-    padding: 10px 16px;
+    gap: 5px;
+    padding: 8px 12px;
   }
 
   .stats-line span {
-    min-height: 28px;
-    padding: 0 10px;
-    font-size: 0.78rem;
+    min-height: 24px;
+    padding: 0 8px;
+    font-size: 0.7rem;
   }
 
   .table-wrap {
     overflow: visible;
-    padding: 0 12px 12px;
+    padding: 0 8px 10px;
   }
 
   table,
@@ -471,7 +484,7 @@ tbody tr:hover {
   }
 
   tr {
-    margin-top: 10px;
+    margin-top: 8px;
     border: 1px solid var(--line);
     border-radius: 12px;
     background: #fff;
@@ -481,7 +494,7 @@ tbody tr:hover {
     display: grid;
     grid-template-columns: 104px minmax(0, 1fr);
     gap: 10px;
-    padding: 8px 12px;
+    padding: 7px 10px;
     border-bottom: 0;
     font-size: 0.9rem;
   }
@@ -503,12 +516,25 @@ tbody tr:hover {
   }
 
   .text-action {
-    min-height: 32px;
+    min-height: 30px;
     border: 1px solid var(--line);
     border-radius: 999px;
     padding: 0 10px;
     background: #fff;
     font-size: 0.78rem;
+  }
+
+  .empty {
+    padding: 26px 18px;
+    font-size: 0.95rem;
+  }
+
+  .desktop-label {
+    display: none;
+  }
+
+  .mobile-label {
+    display: inline;
   }
 
   .modal {
@@ -549,15 +575,15 @@ tbody tr:hover {
   }
 
   .toolbar {
-    padding: 10px 12px;
+    padding: 10px;
   }
 
   .app-header {
-    padding: 14px;
+    padding: 11px;
   }
 
   h1 {
-    font-size: 1.75rem;
+    font-size: 1.34rem;
   }
 
   td {
