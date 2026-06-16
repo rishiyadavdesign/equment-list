@@ -8,6 +8,6 @@ services:
     healthCheckPath: /health
     envVars:
       - key: DATA_DIR
-        value: /var/data
+        value: /tmp/equipment-list
       - key: FRONTEND_ORIGIN
         value: "*"

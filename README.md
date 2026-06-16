@@ -6,7 +6,7 @@ Backend: Node/Express API in `backend/` for Render.
 
 For local frontend testing, `config.js` keeps `window.EQUIPMENT_API_URL` empty and the app uses browser storage. After deploying the backend on Render, update `config.js` with the Render URL.
 
-For production data on Render, add a persistent disk mounted at `/var/data`, because the backend writes `equipment.json` there when `DATA_DIR=/var/data`.
+For quick Render testing, use `DATA_DIR=/tmp/equipment-list`. For permanent production data, use a database or add a persistent disk and set `DATA_DIR` to that disk mount path.
 
 ## Step 1: Push this folder to GitHub
 
@@ -23,9 +23,9 @@ Create a GitHub repository and push this project.
    - Start Command: `npm start`
    - Health Check Path: `/health`
 4. Add environment variables:
-   - `DATA_DIR=/var/data`
+   - `DATA_DIR=/tmp/equipment-list`
    - `FRONTEND_ORIGIN=*`
-5. For real saved data, add a persistent disk mounted at `/var/data`.
+5. For real saved data that survives restarts, add a persistent disk or database later.
 6. Deploy and copy the backend URL, for example `https://equipment-list-api.onrender.com`.
 
 ## Step 3: Connect frontend to backend
