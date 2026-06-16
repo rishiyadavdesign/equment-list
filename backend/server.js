@@ -27,12 +27,22 @@ async function writableDataFile() {
   ];
 
   for (const dir of candidates) {
+    const equipmentFile = path.join(dir, "equipment.json");
     try {
       await mkdir(dir, { recursive: true });
-      const testFile = path.join(dir, ".write-test");
+      try {
+        const raw = await readFile(equipmentFile, "utf8");
+        JSON.parse(raw || "[]");
+      } catch (error) {
+        if (error.code !== "ENOENT" && error.name !== "SyntaxError") {
+          throw error;
+        }
+        await writeFile(equipmentFile, "[]\n", "utf8");
+      }
+      const testFile = path.join(dir, `.write-test-${Date.now()}`);
       await writeFile(testFile, "ok", "utf8");
-      await unlink(testFile);
-      activeDataFile = path.join(dir, "equipment.json");
+      await unlink(testFile).catch(() => {});
+      activeDataFile = equipmentFile;
       console.log(`Using equipment data file: ${activeDataFile}`);
       return activeDataFile;
     } catch (error) {
@@ -47,7 +57,8 @@ async function ensureDataFile() {
   const dataFile = await writableDataFile();
   try {
     await readFile(dataFile, "utf8");
-  } catch {
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
     await writeFile(dataFile, "[]\n", "utf8");
   }
 }
@@ -94,7 +105,7 @@ function validateItem(item) {
 }
 
 app.get("/health", (_req, res) => {
-  res.json({ ok: true });
+  res.json({ ok: true, version: "storage-v2" });
 });
 
 app.get("/api/equipment", async (_req, res, next) => {
@@ -166,7 +177,10 @@ app.delete("/api/equipment/:id", async (req, res, next) => {
 
 app.use((error, _req, res, _next) => {
   console.error(error);
-  res.status(500).json({ error: "Server error." });
+  res.status(500).json({
+    error: "Server error.",
+    message: process.env.NODE_ENV === "production" ? undefined : error.message
+  });
 });
 
 app.listen(port, () => {
